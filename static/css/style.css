@@ -1,6 +1,8 @@
 :root {
-  --red: #B91C1C;
-  --red-dark: #7F1D1D;
+  --red: #E52229;
+  --red-dark: #B8161C;
+  --navy: #023877;
+  --navy-dark: #01234D;
   --dark: #1F2937;
   --gray: #6B7280;
   --light-bg: #F9FAFB;
@@ -17,20 +19,33 @@ body {
 }
 
 .topbar {
-  background: var(--red);
+  background: var(--navy);
   color: white;
+  border-bottom: 4px solid var(--red);
 }
 .topbar-inner {
   max-width: 960px;
   margin: 0 auto;
-  padding: 16px 20px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
 }
 .brand {
   color: white;
   text-decoration: none;
   font-weight: 700;
   font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
+.brand img { height: 34px; display: block; }
+.brand-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(255,255,255,0.3);
+}
+.brand-text { font-size: 15px; font-weight: 500; opacity: 0.9; }
 
 .container {
   max-width: 960px;
@@ -52,7 +67,7 @@ p.subtitle { color: var(--gray); margin-top: 0; }
 
 .btn {
   display: inline-block;
-  background: var(--red);
+  background: var(--navy);
   color: white;
   padding: 10px 18px;
   border-radius: 8px;
@@ -62,14 +77,15 @@ p.subtitle { color: var(--gray); margin-top: 0; }
   cursor: pointer;
   font-size: 14px;
 }
-.btn:hover { background: var(--red-dark); }
+.btn:hover { background: var(--navy-dark); }
 .btn-secondary {
   background: white;
   color: var(--dark);
   border: 1px solid var(--border);
 }
 .btn-secondary:hover { background: var(--light-bg); }
-.btn-danger { background: #DC2626; }
+.btn-danger { background: var(--red); }
+.btn-danger:hover { background: var(--red-dark); }
 
 .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
 
@@ -118,7 +134,7 @@ form input, form select {
   border-radius: 8px;
   font-size: 14px;
 }
-form input:focus { outline: none; border-color: var(--red); }
+form input:focus { outline: none; border-color: var(--navy); }
 
 .flash {
   padding: 10px 14px;
@@ -191,6 +207,17 @@ tr.row-new {
 .public-header {
   text-align: center;
   margin-bottom: 20px;
+}
+.public-logo {
+  height: 48px;
+  margin-bottom: 16px;
+}
+.public-logo-bar {
+  width: 60px;
+  height: 4px;
+  background: var(--red);
+  margin: 0 auto 20px;
+  border-radius: 2px;
 }
 
 .success-icon {

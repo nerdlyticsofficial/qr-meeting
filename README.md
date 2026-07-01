@@ -1,6 +1,12 @@
 # Sistema de Registro por QR para Reuniones (MVP)
 
-App web simple para gestionar el registro de participantes en reuniones mediante código QR.
+App web simple para gestionar el registro de participantes en reuniones mediante código QR, con la identidad visual del **ITLA** (Instituto Tecnológico de Las Américas).
+
+## Branding aplicado
+- Colores oficiales: azul institucional `#023877` y rojo de acento `#E52229`, extraídos directamente del logo.
+- Logo ITLA en el header de todas las páginas (versión blanca sobre fondo azul), en el formulario público de registro, en la página de confirmación y en el PDF de constancia.
+- Favicon con el logo ITLA.
+- Archivos del logo: `static/img/itla-logo.png` (original) y `static/img/itla-logo-white.png` (versión invertida para fondos oscuros, generada automáticamente).
 
 ## Flujo
 

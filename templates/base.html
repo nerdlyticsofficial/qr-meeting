@@ -4,12 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Sistema de Registro QR{% endblock %}</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/itla-logo.png') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
   <header class="topbar">
     <div class="topbar-inner">
-      <a href="{{ url_for('admin_dashboard') }}" class="brand">📋 Registro QR</a>
+      <a href="{{ url_for('admin_dashboard') }}" class="brand">
+        <img src="{{ url_for('static', filename='img/itla-logo-white.png') }}" alt="ITLA">
+        <span class="brand-divider"></span>
+        <span class="brand-text">Registro de Reuniones</span>
+      </a>
     </div>
   </header>
 

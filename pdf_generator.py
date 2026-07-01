@@ -6,10 +6,16 @@ from reportlab.lib.colors import HexColor
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
 
-BRAND_RED = HexColor("#B91C1C")   # red-700, consistente con El Diario
+import os
+
+BRAND_NAVY = HexColor("#023877")   # azul institucional ITLA
+BRAND_RED = HexColor("#E52229")    # rojo de acento ITLA
 DARK = HexColor("#1F2937")
 GRAY = HexColor("#6B7280")
 LIGHT_BG = HexColor("#F9FAFB")
+
+LOGO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "img", "itla-logo.png")
+LOGO_WHITE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "img", "itla-logo-white.png")
 
 
 def _qr_image(data: str):
@@ -28,9 +34,21 @@ def generate_participant_pdf(path: str, meeting: dict, participant: dict, verify
     width, height = letter
     c = canvas.Canvas(path, pagesize=letter)
 
-    # Fondo de encabezado
-    c.setFillColor(BRAND_RED)
+    # Fondo de encabezado (azul institucional) con barra roja de acento
+    c.setFillColor(BRAND_NAVY)
     c.rect(0, height - 35 * mm, width, 35 * mm, fill=1, stroke=0)
+    c.setFillColor(BRAND_RED)
+    c.rect(0, height - 36.5 * mm, width, 1.5 * mm, fill=1, stroke=0)
+
+    # Logo ITLA en blanco (esquina superior derecha del encabezado azul)
+    if os.path.exists(LOGO_WHITE_PATH):
+        logo = ImageReader(LOGO_WHITE_PATH)
+        logo_h = 16 * mm
+        logo_w = logo_h * (347 / 200)  # proporción real del logo
+        c.drawImage(
+            logo, width - 20 * mm - logo_w, height - 26 * mm, logo_w, logo_h,
+            mask="auto",
+        )
 
     c.setFillColor(HexColor("#FFFFFF"))
     c.setFont("Helvetica-Bold", 20)
@@ -49,9 +67,13 @@ def generate_participant_pdf(path: str, meeting: dict, participant: dict, verify
 
     # Nombre del participante
     y -= 12 * mm
-    c.setFillColor(DARK)
+    c.setFillColor(BRAND_NAVY)
     c.setFont("Helvetica-Bold", 22)
     c.drawString(20 * mm, y, participant["nombre"])
+
+    # Barra roja de acento (detalle de marca ITLA)
+    c.setFillColor(BRAND_RED)
+    c.rect(20 * mm, y - 4 * mm, 22 * mm, 1.2 * mm, fill=1, stroke=0)
 
     # Datos adicionales
     y -= 10 * mm

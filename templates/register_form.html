@@ -3,6 +3,8 @@
 {% block content %}
   <div class="public-form-wrap">
     <div class="public-header">
+      <img src="{{ url_for('static', filename='img/itla-logo.png') }}" alt="ITLA" class="public-logo">
+      <div class="public-logo-bar"></div>
       <h1>{{ meeting['nombre'] }}</h1>
       <p class="subtitle">
         {% if meeting['fecha'] %}{{ meeting['fecha'] }}{% endif %}
