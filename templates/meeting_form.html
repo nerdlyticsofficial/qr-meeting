@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Nueva Reunión{% endblock %}
+{% block content %}
+  <h1>Nueva reunión</h1>
+  <p class="subtitle">Al guardar se generará automáticamente el código QR de registro.</p>
+
+  <div class="card">
+    <form method="POST">
+      <label>Nombre de la reunión *</label>
+      <input type="text" name="nombre" placeholder="Ej: Comité de Transformación Digital" required>
+
+      <label>Fecha</label>
+      <input type="text" name="fecha" placeholder="Ej: 15 de julio, 2026">
+
+      <label>Lugar</label>
+      <input type="text" name="lugar" placeholder="Ej: Sala de Juntas, Torre A">
+
+      <label>Organizador</label>
+      <input type="text" name="organizador" placeholder="Opcional">
+
+      <div class="actions">
+        <button type="submit" class="btn">Crear reunión y generar QR</button>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

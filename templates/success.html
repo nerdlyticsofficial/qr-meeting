@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Registro confirmado{% endblock %}
+{% block content %}
+  <div class="public-form-wrap">
+    <div class="card" style="text-align:center;">
+      <div class="success-icon">✓</div>
+      <h1>¡Registro confirmado!</h1>
+      <p class="subtitle">
+        {{ participant['nombre'] }}, quedaste registrado en<br>
+        <strong>{{ participant['meeting_nombre'] }}</strong>
+      </p>
+      <div class="actions" style="justify-content:center;">
+        <a href="{{ url_for('download_pdf', participant_id=participant['id']) }}" target="_blank" class="btn">
+          Descargar mi constancia (PDF)
+        </a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

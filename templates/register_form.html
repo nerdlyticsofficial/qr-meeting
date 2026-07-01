@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Registro - {{ meeting['nombre'] }}{% endblock %}
+{% block content %}
+  <div class="public-form-wrap">
+    <div class="public-header">
+      <h1>{{ meeting['nombre'] }}</h1>
+      <p class="subtitle">
+        {% if meeting['fecha'] %}{{ meeting['fecha'] }}{% endif %}
+        {% if meeting['lugar'] %} · {{ meeting['lugar'] }}{% endif %}
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Regístrate para participar</h2>
+      <form method="POST">
+        <label>Nombre completo *</label>
+        <input type="text" name="nombre" required value="{{ form.get('nombre','') }}">
+
+        <label>Documento / Cédula</label>
+        <input type="text" name="documento" value="{{ form.get('documento','') }}">
+
+        <label>Email</label>
+        <input type="email" name="email" value="{{ form.get('email','') }}">
+
+        <label>Teléfono</label>
+        <input type="tel" name="telefono" value="{{ form.get('telefono','') }}">
+
+        <label>Empresa / Institución</label>
+        <input type="text" name="empresa" value="{{ form.get('empresa','') }}">
+
+        <label>Cargo</label>
+        <input type="text" name="cargo" value="{{ form.get('cargo','') }}">
+
+        <div class="actions">
+          <button type="submit" class="btn" style="width:100%;">Confirmar registro</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

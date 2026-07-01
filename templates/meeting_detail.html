@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}{{ meeting['nombre'] }}{% endblock %}
+{% block content %}
+  <a href="{{ url_for('admin_dashboard') }}" class="btn-secondary btn" style="margin-bottom:16px;">&larr; Volver</a>
+
+  <h1>{{ meeting['nombre'] }}</h1>
+  <p class="subtitle">
+    {% if meeting['fecha'] %}{{ meeting['fecha'] }}{% endif %}
+    {% if meeting['lugar'] %} · {{ meeting['lugar'] }}{% endif %}
+  </p>
+
+  <div style="display:grid; grid-template-columns: 260px 1fr; gap:16px;">
+    <div class="qr-box">
+      <img src="{{ url_for('static', filename='qr/' + qr_filename) }}" alt="QR de registro">
+      <div class="url-box">{{ registro_url }}</div>
+      <div class="actions" style="justify-content:center;">
+        <a href="{{ url_for('static', filename='qr/' + qr_filename) }}" download class="btn btn-secondary">Descargar QR</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0;">Participantes ({{ participants|length }})</h2>
+        {% if participants %}
+        <a href="{{ url_for('export_csv', meeting_id=meeting['id']) }}" class="btn btn-secondary">Exportar CSV</a>
+        {% endif %}
+      </div>
+
+      {% if participants %}
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Empresa</th>
+              <th>Email</th>
+              <th>Registrado</th>
+              <th>PDF</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in participants %}
+              <tr>
+                <td>{{ p['nombre'] }}</td>
+                <td>{{ p['empresa'] or '—' }}</td>
+                <td>{{ p['email'] or '—' }}</td>
+                <td>{{ p['registered_at'] }}</td>
+                <td>
+                  {% if p['pdf_path'] %}
+                    <a href="{{ url_for('download_pdf', participant_id=p['id']) }}" target="_blank">Ver PDF</a>
+                  {% else %}—{% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="empty-state">Todavía nadie se ha registrado. Comparte el QR.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <form method="POST" action="{{ url_for('delete_meeting', meeting_id=meeting['id']) }}"
+        onsubmit="return confirm('¿Eliminar esta reunión y todos sus participantes?');" style="margin-top:20px;">
+    <button type="submit" class="btn btn-danger">Eliminar reunión</button>
+  </form>
+{% endblock %}

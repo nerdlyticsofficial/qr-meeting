@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Panel de Reuniones{% endblock %}
+{% block content %}
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <div>
+      <h1>Reuniones</h1>
+      <p class="subtitle">Crea una reunión, comparte el QR y consulta los participantes registrados.</p>
+    </div>
+    <a href="{{ url_for('new_meeting') }}" class="btn">+ Nueva reunión</a>
+  </div>
+
+  <div class="card">
+    {% if meetings %}
+      {% for m in meetings %}
+        <div class="meeting-row">
+          <div>
+            <div class="meeting-name">{{ m['nombre'] }}</div>
+            <div class="meeting-meta">
+              {% if m['fecha'] %}{{ m['fecha'] }}{% endif %}
+              {% if m['lugar'] %} · {{ m['lugar'] }}{% endif %}
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span class="badge">{{ m['total_participantes'] }} registrados</span>
+            <a href="{{ url_for('meeting_detail', meeting_id=m['id']) }}" class="btn btn-secondary">Ver</a>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        Aún no has creado ninguna reunión.<br>
+        <a href="{{ url_for('new_meeting') }}" class="btn" style="margin-top:12px;">Crear la primera</a>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
