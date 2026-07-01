@@ -154,6 +154,36 @@ form input:focus { outline: none; border-color: var(--red); }
   padding: 40px 20px;
 }
 
+.live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray);
+  vertical-align: middle;
+  margin-left: 8px;
+}
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
+  50% { opacity: 0.6; box-shadow: 0 0 0 4px rgba(16,185,129,0); }
+}
+
+tr.row-new {
+  animation: highlight-row 2.5s ease-out;
+}
+@keyframes highlight-row {
+  0% { background-color: #FEF3C7; }
+  100% { background-color: transparent; }
+}
+
 .public-form-wrap {
   max-width: 480px;
   margin: 40px auto;

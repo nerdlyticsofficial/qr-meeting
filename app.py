@@ -101,6 +101,32 @@ def meeting_detail(meeting_id):
     )
 
 
+@app.route("/admin/meetings/<int:meeting_id>/participants.json")
+def participants_json(meeting_id):
+    with get_db() as conn:
+        meeting = conn.execute("SELECT id FROM meetings WHERE id=?", (meeting_id,)).fetchone()
+        if not meeting:
+            abort(404)
+        participants = conn.execute(
+            "SELECT * FROM participants WHERE meeting_id=? ORDER BY id DESC", (meeting_id,)
+        ).fetchall()
+
+    return {
+        "total": len(participants),
+        "participants": [
+            {
+                "id": p["id"],
+                "nombre": p["nombre"],
+                "empresa": p["empresa"],
+                "email": p["email"],
+                "registered_at": p["registered_at"],
+                "pdf_path": p["pdf_path"],
+            }
+            for p in participants
+        ],
+    }
+
+
 @app.route("/admin/meetings/<int:meeting_id>/delete", methods=["POST"])
 def delete_meeting(meeting_id):
     with get_db() as conn:

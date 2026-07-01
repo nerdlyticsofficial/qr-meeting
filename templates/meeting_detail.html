@@ -20,44 +20,128 @@
 
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h2 style="margin:0;">Participantes ({{ participants|length }})</h2>
-        {% if participants %}
-        <a href="{{ url_for('export_csv', meeting_id=meeting['id']) }}" class="btn btn-secondary">Exportar CSV</a>
-        {% endif %}
+        <h2 style="margin:0;">
+          Participantes (<span id="participant-count">{{ participants|length }}</span>)
+          <span class="live-indicator" title="Actualización automática">
+            <span class="live-dot"></span> En vivo
+          </span>
+        </h2>
+        <a id="export-link" href="{{ url_for('export_csv', meeting_id=meeting['id']) }}" class="btn btn-secondary"
+           style="{{ '' if participants else 'display:none;' }}">Exportar CSV</a>
       </div>
 
-      {% if participants %}
-        <table>
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Empresa</th>
-              <th>Email</th>
-              <th>Registrado</th>
-              <th>PDF</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for p in participants %}
+      <div id="participants-table-wrap">
+        {% if participants %}
+          <table>
+            <thead>
               <tr>
-                <td>{{ p['nombre'] }}</td>
-                <td>{{ p['empresa'] or '—' }}</td>
-                <td>{{ p['email'] or '—' }}</td>
-                <td>{{ p['registered_at'] }}</td>
-                <td>
-                  {% if p['pdf_path'] %}
-                    <a href="{{ url_for('download_pdf', participant_id=p['id']) }}" target="_blank">Ver PDF</a>
-                  {% else %}—{% endif %}
-                </td>
+                <th>Nombre</th>
+                <th>Empresa</th>
+                <th>Email</th>
+                <th>Registrado</th>
+                <th>PDF</th>
               </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      {% else %}
-        <div class="empty-state">Todavía nadie se ha registrado. Comparte el QR.</div>
-      {% endif %}
+            </thead>
+            <tbody id="participants-tbody">
+              {% for p in participants %}
+                <tr data-id="{{ p['id'] }}">
+                  <td>{{ p['nombre'] }}</td>
+                  <td>{{ p['empresa'] or '—' }}</td>
+                  <td>{{ p['email'] or '—' }}</td>
+                  <td>{{ p['registered_at'] }}</td>
+                  <td>
+                    {% if p['pdf_path'] %}
+                      <a href="/pdf/{{ p['id'] }}" target="_blank">Ver PDF</a>
+                    {% else %}—{% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="empty-state" id="empty-state">Todavía nadie se ha registrado. Comparte el QR.</div>
+        {% endif %}
+      </div>
     </div>
   </div>
+
+  <script>
+    const MEETING_ID = {{ meeting['id'] }};
+    const POLL_INTERVAL_MS = 3000;
+    let knownIds = new Set(
+      Array.from(document.querySelectorAll('#participants-tbody tr')).map(tr => tr.dataset.id)
+    );
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '—';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML || '—';
+    }
+
+    function rowHtml(p) {
+      const pdfCell = p.pdf_path
+        ? `<a href="/pdf/${p.id}" target="_blank">Ver PDF</a>`
+        : '—';
+      return `<tr data-id="${p.id}">
+        <td>${escapeHtml(p.nombre)}</td>
+        <td>${escapeHtml(p.empresa)}</td>
+        <td>${escapeHtml(p.email)}</td>
+        <td>${escapeHtml(p.registered_at)}</td>
+        <td>${pdfCell}</td>
+      </tr>`;
+    }
+
+    async function refreshParticipants() {
+      try {
+        const res = await fetch(`/admin/meetings/${MEETING_ID}/participants.json`);
+        if (!res.ok) return;
+        const data = await res.json();
+
+        document.getElementById('participant-count').textContent = data.total;
+
+        const wrap = document.getElementById('participants-table-wrap');
+        const exportLink = document.getElementById('export-link');
+
+        if (data.total === 0) {
+          wrap.innerHTML = '<div class="empty-state" id="empty-state">Todavía nadie se ha registrado. Comparte el QR.</div>';
+          if (exportLink) exportLink.style.display = 'none';
+          knownIds = new Set();
+          return;
+        }
+
+        if (exportLink) exportLink.style.display = '';
+
+        let tbody = document.getElementById('participants-tbody');
+        if (!tbody) {
+          wrap.innerHTML = `<table>
+            <thead>
+              <tr><th>Nombre</th><th>Empresa</th><th>Email</th><th>Registrado</th><th>PDF</th></tr>
+            </thead>
+            <tbody id="participants-tbody"></tbody>
+          </table>`;
+          tbody = document.getElementById('participants-tbody');
+        }
+
+        const currentIds = new Set(data.participants.map(p => String(p.id)));
+        tbody.innerHTML = data.participants.map(rowHtml).join('');
+
+        // Resaltar filas nuevas desde el último refresco
+        data.participants.forEach(p => {
+          if (!knownIds.has(String(p.id))) {
+            const row = tbody.querySelector(`tr[data-id="${p.id}"]`);
+            if (row) row.classList.add('row-new');
+          }
+        });
+
+        knownIds = currentIds;
+      } catch (e) {
+        // Silencioso: si falla una vez, se reintenta en el próximo ciclo
+      }
+    }
+
+    setInterval(refreshParticipants, POLL_INTERVAL_MS);
+  </script>
 
   <form method="POST" action="{{ url_for('delete_meeting', meeting_id=meeting['id']) }}"
         onsubmit="return confirm('¿Eliminar esta reunión y todos sus participantes?');" style="margin-top:20px;">
